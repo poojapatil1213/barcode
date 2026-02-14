@@ -1,0 +1,11 @@
+# System files
+.DS_Store
+
+# Data files
+*.png
+*.pdf
+*.xlsx
+*.numbers
+
+# Checkpoint files
+.ipynb_checkpoints
