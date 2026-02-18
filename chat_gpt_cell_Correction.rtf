@@ -1,0 +1,85 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2820
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww37900\viewh20740\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 def add_validation(series_start):\
+    weighted_list = [8,6,4,2,3,5,9,7]\
+    temp_storage = 0\
+    \
+    series_start_str = str(series_start)\
+\
+    if len(series_start_str) != 8:\
+        raise ValueError("Series number must be exactly 8 digits")\
+\
+    for i, digit_char in enumerate(series_start_str):\
+        digit_int = int(digit_char)\
+        temp_storage += digit_int * weighted_list[i]\
+        \
+    temp_mod_value = temp_storage % 11\
+    validation_number = 11 - temp_mod_value\
+\
+    if validation_number == 10:\
+        validation_number = 0\
+    elif validation_number == 11:\
+        validation_number = 5\
+        \
+    return validation_number\
+\
+\
+\
+\
+def generate_series(series_start, series_prefix, series_suffix, series_counter):\
+    barcode_final = []\
+\
+    for i in range(series_counter):\
+        number = series_start + i\
+        validation_number = add_validation(number)\
+        barcode_str = f"\{series_prefix\}\{number\}\{validation_number\}\{series_suffix\}"\
+        barcode_final.append(barcode_str)\
+\
+    return barcode_final\
+\
+\
+\
+\
+from reportlab.pdfgen import canvas\
+from reportlab.lib.units import mm\
+from reportlab.graphics.barcode.code39 import Standard39\
+\
+filename = "barcode39_reportlab.pdf"\
+\
+# Take input ONCE\
+series_start = int(input("Enter 8-digit series starting number: "))\
+series_prefix = input("Enter series prefix: ")\
+series_suffix = input("Enter series suffix: ")\
+series_counter = int(input("Enter series count: "))\
+\
+barcode_values = generate_series(series_start, series_prefix, series_suffix, series_counter)\
+\
+c = canvas.Canvas(filename)\
+y_position = 280 * mm\
+x_position = 5 * mm\
+\
+for value in barcode_values:\
+    barcode = Standard39(value, barWidth=0.2*mm, barHeight=10*mm, stop=True)\
+\
+    barcode.drawOn(c, x_position, y_position)\
+    c.setFont("Helvetica", 7)\
+    c.drawString(x_position + 8*mm, y_position - 4*mm, value)\
+\
+    x_position += 50 * mm\
+\
+    if x_position > 180 * mm:\
+        x_position = 5 * mm\
+        y_position -= 20 * mm\
+\
+    if y_position < 20 * mm:\
+        c.showPage()\
+        y_position = 280 * mm\
+\
+c.save()\
+print(f"Generated PDF: \{filename\}")\
+}
