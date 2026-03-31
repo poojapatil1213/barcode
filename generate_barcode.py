@@ -53,14 +53,17 @@ series_start = input("Enter 8-digit starting number: ")
 prefix = input("Enter prefix: ")
 suffix = input("Enter suffix: ")
 count = int(input("Enter how many barcodes: "))
+pdf_file_location = input("Enter the file path where you want your barcode pdf to be stored: ")
 
 barcode_values = generate_series(series_start, prefix, suffix, count)
 
 # -----------------------------
 # A4 LABEL SETUP
 # -----------------------------
-filename = "barcode_labels_A4.pdf"
-c = canvas.Canvas(filename, pagesize=A4)
+
+#filename = "barcode_labels_A4.pdf"
+#filename = "/Users/poojapatil/Documents/barcode/barcode_labels_A4.pdf"
+c = canvas.Canvas(pdf_file_location, pagesize=A4)
 
 page_width, page_height = A4
 
